@@ -108,9 +108,9 @@ page = Div(
             cls='flex items-center justify-center'
         ),
         Nav(
-            A('Features', href='#', cls='text-sm font-medium hover:underline underline-offset-4'),
-            A('Testimonials', href='#', cls='text-sm font-medium hover:underline underline-offset-4'),
-            A('FAQ', href='#', cls='text-sm font-medium hover:underline underline-offset-4'),
+            A('Features', href='#features', cls='text-sm font-medium hover:underline underline-offset-4'),
+            A('Testimonials', href='#testimonials', cls='text-sm font-medium hover:underline underline-offset-4'),
+            A('FAQ', href='#faq', cls='text-sm font-medium hover:underline underline-offset-4'),
             cls='ml-auto flex gap-4 sm:gap-6'
         ),
         cls='px-4 lg:px-6 h-14 flex items-center justify-between'
@@ -146,7 +146,7 @@ page = Div(
                 ),
                 cls='px-4 md:px-6 space-y-10 xl:space-y-16'
             ),
-            cls='w-full py-6 md:py-12 lg:py-18 border-y'
+            cls='w-full py-6 md:py-12 lg:py-18 border-y',
         ),
         Section(
             Div(
@@ -193,7 +193,8 @@ page = Div(
                 ),
                 cls='container space-y-12 px-4 md:px-6 mx-auto'
             ),
-            cls='w-full py-12 md:py-24 lg:py-32 bg-[#f1c40f]'
+            cls='w-full py-12 md:py-24 lg:py-32 bg-[#f1c40f]',
+            id='features'
         ),
         Section(
             Div(
@@ -226,7 +227,8 @@ page = Div(
                 ),
                 cls='container grid items-center justify-center gap-4 px-4 text-center md:px-6 mx-auto'
             ),
-            cls='w-full py-12 md:py-24 lg:py-32 bg-[#e67e22]'
+            cls='w-full py-12 md:py-24 lg:py-32 bg-[#e67e22]',
+            id='testimonials'
         ),
         Section(
             Div(
@@ -258,7 +260,8 @@ page = Div(
                 ),
                 cls='container px-4 md:px-6 mx-auto'
             ),
-            cls='w-full py-12 md:py-24 lg:py-32 bg-[#f1c40f]'
+            cls='w-full py-12 md:py-24 lg:py-32 bg-[#f1c40f]',
+            id='faq'
         ),
         cls='flex-1'
     ),
