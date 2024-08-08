@@ -6,6 +6,7 @@ from fasthtml.svg import *
 tlink = Script(src="https://cdn.tailwindcss.com"),
 app = FastHTML(hdrs=(tlink, ), pico=False)
 
+#js
 accordian_script = Script("""
 document.querySelectorAll('.accordion-trigger').forEach(button => {
     button.addEventListener('click', () => {
@@ -127,7 +128,7 @@ page = Div(
                             ),
                             P('Introducing the NotFriend - the ultimate in anti-technology fashion. This literal plastic circle does\r\n              absolutely nothing, but looks great doing it.', cls='mx-auto max-w-[700px] text-[#555] md:text-xl'),
                             Div(
-                                A('Buy Now', href='#', cls='inline-flex h-9 items-center justify-center rounded-md bg-[#e74c3c] px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-[#c0392b] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50'),
+                                A('Buy Now', href='/buy-now', cls='inline-flex h-9 items-center justify-center rounded-md bg-[#e74c3c] px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-[#c0392b] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50'),
                                 cls='space-x-4 mt-6'
                             ),
                             cls='my-auto space-y-6'
@@ -275,8 +276,111 @@ page = Div(
 def home():
     return Title("NotFriend"), page, accordian_script
 
-@app.get('/product_shot.jpeg')
-def product_shot():
-    return FileResponse('product_shot.jpeg')
+@app.get('/buy-now')
+def buy_now():
+    form = Form(
+        Select(
+            Option('Physical', value='physical'),
+            Option('Virtual', value='virtual'),
+            required=True,
+            name='product', id='product',
+            cls='w-full px-4 py-2 border border-[#2c3e50] rounded-md mb-4'
+        ),
+        Input(type='email', placeholder='Email', required=True, name='email', id='email',
+              cls='w-full px-4 py-2 border border-[#2c3e50] rounded-md mb-4'),
+        Textarea(type='text', placeholder='Address', name='address', id='address',
+              cls='w-full px-4 py-2 border border-[#2c3e50] rounded-md mb-4'),
+        Button('Buy Now', type='submit', cls='w-full px-4 py-2 bg-[#e74c3c] text-white rounded-md'),
+        action="/buy"
+    )
+    form = Div(
+        H2('Buy Now ($24.96)', cls='pt-8 text-3xl font-bold tracking-tighter sm:text-5xl text-[#2c3e50]'),
+        P('Please enter your email (required) and physical address (physical NotFriends only) to facilitate NotFriend delivery.', 
+        cls='my-5  max-w-[900px] text-[#555] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'),
+        form, 
+        cls='max-w-[400px] mx-auto')
+    return Title("Buy Now"), Body(form)
+
+# For images, CSS, etc.
+@app.get("/{fname:path}.{ext:static}")
+def static(fname:str, ext:str): return FileResponse(f'{fname}.{ext}')
+
+# Stripe Stuff
+import stripe
+stripe.api_key = ""#os.environ["STRIPE_KEY"]
+webhook_secret = ""#os.environ['STRIPE_WEBHOOK_SECRET']
+DOMAIN = ""#os.environ['DOMAIN']
+
+# They submit a form with their email, physical address and type of product
+@app.get("/buy")
+def buy_credits(product, email, address):
+  print(product, email, address)
+  # TODO validate these inputs
+  # Create Stripe Checkout Session
+  price = 2496
+  pn = f'You are buying a NotFriend ({product} version) - thank you for being a part of this!'
+  s = stripe.checkout.Session.create(
+      payment_method_types=['card'],
+      metadata = {
+        "product": product,
+        "email":email,
+        "address":address
+      },
+      line_items=[{
+          'price_data': {
+              'currency': 'usd',
+              'unit_amount': price,
+              'product_data': {
+                  'name': pn,
+              },
+          },
+          'quantity': 1,
+      }],
+      mode='payment',
+      success_url=DOMAIN + '/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url=DOMAIN + '/cancel',
+  )
+
+  # Send the USER to STRIPE
+  return RedirectResponse(s['url'])
+
+
+# STRIPE sends the USER here after a payment was canceled.
+@app.get("/cancel")
+def cancel():
+  return P(f'Cancelled.', A('Return Home', href='/'))
+
+
+# STRIPE sends the USER here after a payment was 'successful'.
+@app.get("/success")
+def success():
+  return P(f'Success!', A('Return Home', href='/'))
+
+
+# STRIPE calls this to tell APP when a payment was completed.
+@app.post('/webhook')
+async def stripe_webhook(request):
+  print(request)
+  print('Received webhook')
+  payload = await request.body()
+  payload = payload.decode("utf-8")
+  signature = request.headers.get('stripe-signature')
+  print(payload)
+
+  # Verify the Stripe webhook signature
+  try:
+    event = stripe.Webhook.construct_event(payload, signature, webhook_secret)
+  except ValueError:
+    print('Invalid payload')
+    return {'error': 'Invalid payload'}, 400
+  except stripe.error.SignatureVerificationError:
+    print('Invalid signature')
+    return {'error': 'Invalid signature'}, 400
+
+  # Handle the event
+  if event['type'] == 'checkout.session.completed':
+    session = event['data']['object']
+    print("Session completed", session)
+    return {'status': 'success'}, 200
 
 serve()
