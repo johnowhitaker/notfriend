@@ -36,7 +36,7 @@ def FAQI(q, a, buy_btn=False):
     return Div(
             H3(
                 Button(
-                    q,
+                    P(q, cls="mx-3"),
                     Svg(
                         Path(d='m6 9 6 6 6-6'),
                         xmlns='http://www.w3.org/2000/svg',
@@ -48,7 +48,7 @@ def FAQI(q, a, buy_btn=False):
                         stroke_width='2',
                         stroke_linecap='round',
                         stroke_linejoin='round',
-                        cls='lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
+                        cls='mx-3 lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
                     ),
                     type='button',
                     aria_controls='radix-:r1:',
@@ -66,7 +66,8 @@ def FAQI(q, a, buy_btn=False):
             ),
             Div(
                 Div(
-                    P(a, data_id='74', cls='text-[#555]'),
+                    P(a, data_id='74', cls='m-3 text-[#555]'),
+                    A('Buy Now', href='/buy-now', cls='mx-3 inline-flex h-9 items-center justify-center rounded-md bg-[#e74c3c] px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-[#c0392b] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50') if buy_btn else "",
                     cls='pb-4 pt-0'
                 ),
                 data_state='closed',
