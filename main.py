@@ -146,7 +146,7 @@ page = Div(
                 ),
                 cls='px-4 md:px-6 space-y-10 xl:space-y-16'
             ),
-            cls='w-full py-6 md:pt-12 lg:pt-18 border-y'
+            cls='w-full py-6 md:py-12 lg:py-18 border-y'
         ),
         Section(
             Div(
@@ -308,13 +308,13 @@ def static(fname:str, ext:str): return FileResponse(f'{fname}.{ext}')
 
 # Stripe Stuff
 import stripe
-stripe.api_key = ""#os.environ["STRIPE_KEY"]
-webhook_secret = ""#os.environ['STRIPE_WEBHOOK_SECRET']
-DOMAIN = ""#os.environ['DOMAIN']
+stripe.api_key = os.environ["STRIPE_KEY"]
+webhook_secret = os.environ['STRIPE_WEBHOOK_SECRET']
+DOMAIN = os.environ['DOMAIN']
 
 # They submit a form with their email, physical address and type of product
 @app.get("/buy")
-def buy_credits(product, email, address):
+def buy_credits(product=str, email=str, address=str):
   print(product, email, address)
   # TODO validate these inputs
   # Create Stripe Checkout Session
@@ -349,13 +349,13 @@ def buy_credits(product, email, address):
 # STRIPE sends the USER here after a payment was canceled.
 @app.get("/cancel")
 def cancel():
-  return P(f'Cancelled.', A('Return Home', href='/'))
+  return Title('Cancelled'), P(f'Cancelled.', A('Return Home', href='/'))
 
 
 # STRIPE sends the USER here after a payment was 'successful'.
 @app.get("/success")
 def success():
-  return P(f'Success!', A('Return Home', href='/'))
+  return Title('Success'), P(f'Success!', A('Return Home', href='/'))
 
 
 # STRIPE calls this to tell APP when a payment was completed.
