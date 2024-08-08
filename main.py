@@ -6,6 +6,84 @@ from fasthtml.svg import *
 tlink = Script(src="https://cdn.tailwindcss.com"),
 app = FastHTML(hdrs=(tlink, ), pico=False)
 
+accordian_script = Script("""
+document.querySelectorAll('.accordion-trigger').forEach(button => {
+    button.addEventListener('click', () => {
+        const accordionItem = button.closest('.accordion-item');
+        const wasOpen = accordionItem.dataset.state === 'open';
+
+        // Close all accordion items
+        document.querySelectorAll('.accordion-item').forEach(item => {
+            item.dataset.state = 'closed';
+            item.querySelector('.accordion-content').hidden = true;
+            item.querySelector('.accordion-trigger').dataset.state = 'closed';
+            item.querySelector('.accordion-trigger svg').style.transform = 'rotate(0deg)';
+        });
+
+        // If the clicked item wasn't open before, open it
+        if (!wasOpen) {
+            accordionItem.dataset.state = 'open';
+            accordionItem.querySelector('.accordion-content').hidden = false;
+            button.dataset.state = 'open';
+            button.querySelector('svg').style.transform = 'rotate(180deg)';
+        }
+    });
+});
+""")
+
+def FAQI(q, a, buy_btn=False):
+    return Div(
+            H3(
+                Button(
+                    q,
+                    Svg(
+                        Path(d='m6 9 6 6 6-6'),
+                        xmlns='http://www.w3.org/2000/svg',
+                        width='24',
+                        height='24',
+                        viewbox='0 0 24 24',
+                        fill='none',
+                        stroke='currentColor',
+                        stroke_width='2',
+                        stroke_linecap='round',
+                        stroke_linejoin='round',
+                        cls='lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
+                    ),
+                    type='button',
+                    aria_controls='radix-:r1:',
+                    aria_expanded='true',
+                    data_state='closed',
+                    data_orientation='vertical',
+                    id='radix-:r0:',
+                    data_id='72',
+                    data_radix_collection_item='',
+                    cls='accordion-trigger flex flex-1 items-center justify-between py-4 transition-all hover:underline [&[data-state=open]>svg]:rotate-180 bg-[#e67e22] text-[#2c3e50] font-bold'
+                ),
+                data_orientation='vertical',
+                data_state='closed',
+                cls='flex'
+            ),
+            Div(
+                Div(
+                    P(a, data_id='74', cls='text-[#555]'),
+                    cls='pb-4 pt-0'
+                ),
+                data_state='closed',
+                id='radix-:r1:',
+                role='region',
+                aria_labelledby='radix-:r0:',
+                data_orientation='vertical',
+                data_id='73',
+                hidden='',
+                style='--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width); --radix-collapsible-content-height: 79.98949432373047px; --radix-collapsible-content-width: 487.9989318847656px;',
+                cls='accordion-content overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'
+            ),
+            data_state='closed',
+            data_orientation='vertical',
+            data_id='71',
+            cls='accordion-item border-b'
+        )
+
 page = Div(
     Header(
         A(
@@ -140,7 +218,7 @@ page = Div(
                             ),
                             cls='mx-auto flex w-full items-center justify-center p-4 sm:p-8'
                         ),
-                        cls='grid w-full grid-cols-1 items-stretch justify-center divide-y md:grid-cols-2'
+                        cls='grid w-full grid-cols-1 items-stretch justify-center md:grid-cols-2'
                     ),
                     cls='divide-y rounded-lg border border-[#2c3e50]'
                 ),
@@ -161,146 +239,10 @@ page = Div(
                 Div(
                     Div(
                         Div(
-                            Div(
-                                H3(
-                                    Button(
-                                        'What is the NotFriend?',
-                                        Svg(
-                                            Path(d='m6 9 6 6 6-6'),
-                                            xmlns='http://www.w3.org/2000/svg',
-                                            width='24',
-                                            height='24',
-                                            viewbox='0 0 24 24',
-                                            fill='none',
-                                            stroke='currentColor',
-                                            stroke_width='2',
-                                            stroke_linecap='round',
-                                            stroke_linejoin='round',
-                                            cls='lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
-                                        ),
-                                        type='button',
-                                        aria_controls='radix-:rj:',
-                                        aria_expanded='false',
-                                        data_state='closed',
-                                        data_orientation='vertical',
-                                        id='radix-:ri:',
-                                        data_radix_collection_item='',
-                                        cls='flex flex-1 items-center justify-between py-4 transition-all hover:underline [&[data-state=open]>svg]:rotate-180 bg-[#e67e22] text-[#2c3e50] font-bold'
-                                    ),
-                                    data_orientation='vertical',
-                                    data_state='closed',
-                                    cls='flex'
-                                ),
-                                Div(data_state='closed', id='radix-:rj:', hidden='', role='region', aria_labelledby='radix-:ri:', data_orientation='vertical', style='--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);', cls='overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'),
-                                data_state='closed',
-                                data_orientation='vertical',
-                                cls='border-b'
-                            ),
-                            Div(
-                                H3(
-                                    Button(
-                                        'How does the NotFriend work?',
-                                        Svg(
-                                            Path(d='m6 9 6 6 6-6'),
-                                            xmlns='http://www.w3.org/2000/svg',
-                                            width='24',
-                                            height='24',
-                                            viewbox='0 0 24 24',
-                                            fill='none',
-                                            stroke='currentColor',
-                                            stroke_width='2',
-                                            stroke_linecap='round',
-                                            stroke_linejoin='round',
-                                            cls='lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
-                                        ),
-                                        type='button',
-                                        aria_controls='radix-:rl:',
-                                        aria_expanded='false',
-                                        data_state='closed',
-                                        data_orientation='vertical',
-                                        id='radix-:rk:',
-                                        data_radix_collection_item='',
-                                        cls='flex flex-1 items-center justify-between py-4 transition-all hover:underline [&[data-state=open]>svg]:rotate-180 bg-[#e67e22] text-[#2c3e50] font-bold'
-                                    ),
-                                    data_orientation='vertical',
-                                    data_state='closed',
-                                    cls='flex'
-                                ),
-                                Div(data_state='closed', id='radix-:rl:', hidden='', role='region', aria_labelledby='radix-:rk:', data_orientation='vertical', style='--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);', cls='overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'),
-                                data_state='closed',
-                                data_orientation='vertical',
-                                cls='border-b'
-                            ),
-                            Div(
-                                H3(
-                                    Button(
-                                        'Why would I want a NotFriend?',
-                                        Svg(
-                                            Path(d='m6 9 6 6 6-6'),
-                                            xmlns='http://www.w3.org/2000/svg',
-                                            width='24',
-                                            height='24',
-                                            viewbox='0 0 24 24',
-                                            fill='none',
-                                            stroke='currentColor',
-                                            stroke_width='2',
-                                            stroke_linecap='round',
-                                            stroke_linejoin='round',
-                                            cls='lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
-                                        ),
-                                        type='button',
-                                        aria_controls='radix-:rn:',
-                                        aria_expanded='false',
-                                        data_state='closed',
-                                        data_orientation='vertical',
-                                        id='radix-:rm:',
-                                        data_radix_collection_item='',
-                                        cls='flex flex-1 items-center justify-between py-4 transition-all hover:underline [&[data-state=open]>svg]:rotate-180 bg-[#e67e22] text-[#2c3e50] font-bold'
-                                    ),
-                                    data_orientation='vertical',
-                                    data_state='closed',
-                                    cls='flex'
-                                ),
-                                Div(data_state='closed', id='radix-:rn:', hidden='', role='region', aria_labelledby='radix-:rm:', data_orientation='vertical', style='--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);', cls='overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'),
-                                data_state='closed',
-                                data_orientation='vertical',
-                                cls='border-b'
-                            ),
-                            Div(
-                                H3(
-                                    Button(
-                                        'Can I actually buy this?',
-                                        Svg(
-                                            Path(d='m6 9 6 6 6-6'),
-                                            xmlns='http://www.w3.org/2000/svg',
-                                            width='24',
-                                            height='24',
-                                            viewbox='0 0 24 24',
-                                            fill='none',
-                                            stroke='currentColor',
-                                            stroke_width='2',
-                                            stroke_linecap='round',
-                                            stroke_linejoin='round',
-                                            cls='lucide lucide-chevron-down h-4 w-4 shrink-0 transition-transform duration-200'
-                                        ),
-                                        type='button',
-                                        aria_controls='radix-:rp:',
-                                        aria_expanded='false',
-                                        data_state='closed',
-                                        data_orientation='vertical',
-                                        id='radix-:ro:',
-                                        data_radix_collection_item='',
-                                        cls='flex flex-1 items-center justify-between py-4 transition-all hover:underline [&[data-state=open]>svg]:rotate-180 bg-[#e67e22] text-[#2c3e50] font-bold'
-                                    ),
-                                    data_orientation='vertical',
-                                    data_state='closed',
-                                    cls='flex'
-                                ),
-                                Div(data_state='closed', id='radix-:rp:', hidden='', role='region', aria_labelledby='radix-:ro:', data_orientation='vertical', style='--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);', cls='overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'),
-                                data_state='closed',
-                                data_orientation='vertical',
-                                cls='border-b'
-                            ),
+                            FAQI('What is the NotFriend?', "The NotFriend is a revolutionary non-smart pendant that does absolutely nothing. It's a literal circle of plastic that you can wear around your neck to make a bold statement about the absurdity of technology."),
+                            FAQI('How does the NotFriend work?', 'The NotFriend doesn\'t work. It\'s a non-working, non-smart, non-technological device. You simply wear it and enjoy the fact that it does absolutely nothing.'),
+                            FAQI('Why would I want a NotFriend?', 'The NotFriend is the perfect accessory for anyone who wants to make a statement about the over-saturation of technology in our lives. It\'s a bold, ironic, and humorous way to embrace the beauty of simplicity and non-functionality.'),
+                            FAQI("Can I actually buy this?", "Yes, you can! The NotFriend is available for purchase on our website. Click the \"Buy Now\" button to get your very own non-smart AI pendant.", buy_btn=True),
                             data_orientation='vertical',
                             cls='border-[#2c3e50] rounded-lg'
                         ),
@@ -331,7 +273,7 @@ page = Div(
 
 @app.get('/')
 def home():
-    return Title("NotFriend"), page
+    return Title("NotFriend"), page, accordian_script
 
 @app.get('/product_shot.jpeg')
 def product_shot():
