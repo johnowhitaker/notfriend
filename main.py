@@ -111,7 +111,7 @@ page = Div(
                     ),
                     cls='mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3'
                 ),
-                cls='container space-y-12 px-4 md:px-6'
+                cls='container space-y-12 px-4 md:px-6 mx-auto'
             ),
             cls='w-full py-12 md:py-24 lg:py-32 bg-[#f1c40f]'
         ),
@@ -127,7 +127,7 @@ page = Div(
                         Div(
                             Div(
                                 Div('"It\'s the best non-product I\'ve ever owned!"', cls='text-xl font-bold text-[#2c3e50]'),
-                                Div('- Jane Doe, NotFriend Enthusiast', cls='text-sm text-[#555]'),
+                                Div('- Jane Doe, Imaginary NotFriend Enthusiast', cls='text-sm text-[#555]'),
                                 cls='grid gap-2 text-left'
                             ),
                             cls='mx-auto flex w-full items-center justify-center p-4 sm:p-8'
@@ -135,7 +135,7 @@ page = Div(
                         Div(
                             Div(
                                 Div('"I can\'t imagine my life without my NotFriend."', cls='text-xl font-bold text-[#2c3e50]'),
-                                Div('- John Smith, NotFriend Addict', cls='text-sm text-[#555]'),
+                                Div('- John Smith, Imaginary NotFriend Addict', cls='text-sm text-[#555]'),
                                 cls='grid gap-2 text-left'
                             ),
                             cls='mx-auto flex w-full items-center justify-center p-4 sm:p-8'
@@ -144,7 +144,7 @@ page = Div(
                     ),
                     cls='divide-y rounded-lg border border-[#2c3e50]'
                 ),
-                cls='container grid items-center justify-center gap-4 px-4 text-center md:px-6'
+                cls='container grid items-center justify-center gap-4 px-4 text-center md:px-6 mx-auto'
             ),
             cls='w-full py-12 md:py-24 lg:py-32 bg-[#e67e22]'
         ),
@@ -312,7 +312,7 @@ page = Div(
                     ),
                     cls='mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12'
                 ),
-                cls='container px-4 md:px-6'
+                cls='container px-4 md:px-6 mx-auto'
             ),
             cls='w-full py-12 md:py-24 lg:py-32 bg-[#f1c40f]'
         ),
