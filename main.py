@@ -4,7 +4,7 @@ from fasthtml.svg import *
 
 # Set up the app
 tlink = Script(src="https://cdn.tailwindcss.com"),
-app = FastHTML(hdrs=(tlink, ), pico=False)
+app = FastHTML(hdrs=(tlink, ), pico=False, default_hdrs=False)
 
 #js
 accordian_script = Script("""
@@ -181,7 +181,7 @@ page = Div(
                     ),
                     Div(
                         H3('Eco-Friendly', cls='text-lg font-bold text-[#2c3e50]'),
-                        P('The NotFriend has a zero carbon footprint, because it literally does nothing.', cls='text-[#555]'),
+                        P('The NotFriend has a tiny carbon footprint, because it literally does nothing.', cls='text-[#555]'),
                         cls='grid gap-1'
                     ),
                     Div(
@@ -244,7 +244,7 @@ page = Div(
                             FAQI('What is the NotFriend?', "The NotFriend is a revolutionary non-smart pendant that does absolutely nothing. It's a literal circle of plastic that you can wear around your neck to make a bold statement about the absurdity of technology."),
                             FAQI('How does the NotFriend work?', 'The NotFriend doesn\'t work. It\'s a non-working, non-smart, non-technological device. You simply wear it and enjoy the fact that it does absolutely nothing.'),
                             FAQI('Why would I want a NotFriend?', 'The NotFriend is the perfect accessory for anyone who wants to make a statement about the over-saturation of technology in our lives. It\'s a bold, ironic, and humorous way to embrace the beauty of simplicity and non-functionality.'),
-                            FAQI("Can I actually buy this?", "Yes, you can! The NotFriend is available for purchase on our website. Click the \"Buy Now\" button to get your very own non-smart AI pendant.", buy_btn=True),
+                            FAQI("Can I actually buy this?", "Yes, you can! I'm actually making these. There's a digital version too. Click the \"Buy Now\" button to get your very own non-smart AI pendant.", buy_btn=True),
                             data_orientation='vertical',
                             cls='border-[#2c3e50] rounded-lg'
                         ),
@@ -313,75 +313,75 @@ webhook_secret = os.environ['STRIPE_WEBHOOK_SECRET']
 DOMAIN = os.environ['DOMAIN']
 
 # They submit a form with their email, physical address and type of product
-@app.get("/buy")
-def buy_credits(product=str, email=str, address=str):
-  print(product, email, address)
-  # TODO validate these inputs
-  # Create Stripe Checkout Session
-  price = 2496
-  pn = f'You are buying a NotFriend ({product} version) - thank you for being a part of this!'
-  s = stripe.checkout.Session.create(
-      payment_method_types=['card'],
-      metadata = {
+@app.get("/buy/")
+def buy_credits(product:str, email:str, address:str):
+    print(product, email, address)
+    # TODO validate these inputs
+    # Create Stripe Checkout Session
+    price = 2496
+    pn = f'You are buying a NotFriend ({product} version) - thank you for being a part of this!'
+    s = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        metadata = {
         "product": product,
         "email":email,
         "address":address
-      },
-      line_items=[{
-          'price_data': {
-              'currency': 'usd',
-              'unit_amount': price,
-              'product_data': {
-                  'name': pn,
-              },
-          },
-          'quantity': 1,
-      }],
-      mode='payment',
-      success_url=DOMAIN + '/success?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url=DOMAIN + '/cancel',
-  )
+        },
+        line_items=[{
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': price,
+                'product_data': {
+                    'name': pn,
+                },
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=DOMAIN + '/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url=DOMAIN + '/cancel',
+    )
 
-  # Send the USER to STRIPE
-  return RedirectResponse(s['url'])
+    # Send the USER to STRIPE
+    return RedirectResponse(s['url'])
 
 
 # STRIPE sends the USER here after a payment was canceled.
 @app.get("/cancel")
 def cancel():
-  return Title('Cancelled'), P(f'Cancelled.', A('Return Home', href='/'))
+    return Title('Cancelled'), P(f'Cancelled.', A('Return Home', href='/'))
 
 
 # STRIPE sends the USER here after a payment was 'successful'.
 @app.get("/success")
 def success():
-  return Title('Success'), P(f'Success!', A('Return Home', href='/'))
+    return Title('Success'), P(f'Success!', A('Return Home', href='/'))
 
 
 # STRIPE calls this to tell APP when a payment was completed.
 @app.post('/webhook')
 async def stripe_webhook(request):
-  print(request)
-  print('Received webhook')
-  payload = await request.body()
-  payload = payload.decode("utf-8")
-  signature = request.headers.get('stripe-signature')
-  print(payload)
+	print(request)
+	print('Received webhook')
+	payload = await request.body()
+	payload = payload.decode("utf-8")
+	signature = request.headers.get('stripe-signature')
+	print(payload)
 
-  # Verify the Stripe webhook signature
-  try:
-    event = stripe.Webhook.construct_event(payload, signature, webhook_secret)
-  except ValueError:
-    print('Invalid payload')
-    return {'error': 'Invalid payload'}, 400
-  except stripe.error.SignatureVerificationError:
-    print('Invalid signature')
-    return {'error': 'Invalid signature'}, 400
+	# Verify the Stripe webhook signature
+	try:
+		event = stripe.Webhook.construct_event(payload, signature, webhook_secret)
+	except ValueError:
+		print('Invalid payload')
+		return {'error': 'Invalid payload'}, 400
+	except stripe.error.SignatureVerificationError:
+		print('Invalid signature')
+		return {'error': 'Invalid signature'}, 400
 
-  # Handle the event
-  if event['type'] == 'checkout.session.completed':
-    session = event['data']['object']
-    print("Session completed", session)
-    return {'status': 'success'}, 200
+	# Handle the event
+	if event['type'] == 'checkout.session.completed':
+		session = event['data']['object']
+		print("Session completed", session)
+		return {'status': 'success'}, 200
 
 serve()
